@@ -11,23 +11,27 @@
 
             function loadProducts() {
                 $.get("api/products", function (data, status) {
-                    let items = '<ul id="productList">';
+                    let tableOfProducts = '<table border="1" id="productTable">';
+                    tableOfProducts += '<tr id="header"><th>Name</th><th>Price</th><th>Amount</th></tr>';
                     for (element in data) {
-                        let item = "Product name: " + data[element].Name + "<br />Price: "
-                            + data[element].Price + "<br />Amount: " + data[element].Amount;
-                        items += '<li>' + item + "</li>";
+                        let product = '<td class="productName">' + data[element].Name + '</td>'; 
+                        product += '<td class="productPrice">' + data[element].Price + '</td>';
+                        product += '<td>' + data[element].Amount + '</td>';
+                        tableOfProducts += '<tr class="productRow">' + product + '</tr>';
                     }
-                    items += "</ul>";
-                    $('#content').html(items);
+                    tableOfProducts += '</table>';
+                    $('#content').html(tableOfProducts);
+
                 });
-            };
+            }
 
             $('#search').keyup(function () {
                 var value = $(this).val().toLowerCase();
-
-                $('#productList li').each(function () {
-                    var search = $(this).text().toLowerCase();
-                    if (search.indexOf(value) > -1) {
+                console.log("asd")
+                $('.productRow').each(function () {
+                    var searchName = $(this).find('.productName').text().toLowerCase();
+                    var searchPrice = $(this).find('.productPrice').text().toLowerCase();
+                    if (searchName.indexOf(value) > -1 || (searchPrice.indexOf(value)) > -1) {
                         $(this).show();
                     }
                     else {
@@ -36,26 +40,38 @@
                 });
             });
 
-            $('#btnSort').click(function () {
-                var list, i, siwtching, shouldSwitch;
-                list = document.getElementById("productList");
-                switching = true;
-                while (switching) {
-                    switching = false;
-                    b = list.getElementsByTagName('li');
-                    for (i = 0; i < (b.length - 1); i++) {
-                        shouldSwitch = false;
-                        if (b[i].innerHTML.toLowerCase() > b[i + 1].innerHTML.toLowerCase()) {
-                            shouldSwitch = true;
-                            break;
-                        }
-                    }
-                    if (shouldSwitch) {
-                        b[i].parentNode.insertBefore(b[i + 1], b[i]);
-                        switching = true;
-                    }
-                }
-            });
+            //$("tr#header").click(function () {        // function_tr
+            //    $(this).css("background-color", "yellow");
+            //});
+
+            //$('#header').click(function () {
+            //    var dir = $(this).attr('data-dir') || 'desc';
+            //    dir = dir == 'asc' ? 'desc' : 'asc';
+            //    $(this).attr('data-dir', dir)
+            //    alert(dir)
+
+            //});
+
+            //$('#btnSort').click(function () {
+            //    var list, i, switching, shouldSwitch;
+            //    list = document.getElementById("productList");
+            //    switching = true;
+            //    while (switching) {
+            //        switching = false;
+            //        b = list.getElementsByTagName('li');
+            //        for (i = 0; i < (b.length - 1); i++) {
+            //            shouldSwitch = false;
+            //            if (b[i].innerHTML.toLowerCase() > b[i + 1].innerHTML.toLowerCase()) {
+            //                shouldSwitch = true;
+            //                break;
+            //            }
+            //        }
+            //        if (shouldSwitch) {
+            //            b[i].parentNode.insertBefore(b[i + 1], b[i]);
+            //            switching = true;
+            //        }
+            //    }
+            //});
         });
     </script>
 </head>
@@ -67,7 +83,7 @@
     <hr />
 
     <div>
-        <label>Search Products</label>
+        <label>Search Products (by Name or Price): </label>
         <input type="text" id="search" placeholder="Filter list..." />
     </div>
     <hr />

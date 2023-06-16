@@ -23,7 +23,7 @@
                     contentType: "application/json",
                     success: function (response) {
                         alert("Login successful!");
-                        // Redirect to dashboard or perform any other action
+                        window.location.href = "Index.html";
                     },
                     error: function (error) {
                         alert("Login failed: " + error.responseJSON.message);

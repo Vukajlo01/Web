@@ -29,7 +29,7 @@ namespace WebProject.Controllers
             user.Id = Guid.NewGuid();
 
             // Serialize the user object to a string
-            var userData = $"{user.Id},{user.Username},{user.Password},{user.Role}";
+            var userData = $"{user.Id};{user.Username};{user.Password};{user.Role}";
 
             // Append the user data to the text file
             using (var writer = new StreamWriter(filePath, true))
