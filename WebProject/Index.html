@@ -1,0 +1,77 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script src="Scripts/jquery-3.4.1.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            loadProducts();
+
+            function loadProducts() {
+                $.get("api/products", function (data, status) {
+                    let items = '<ul id="productList">';
+                    for (element in data) {
+                        let item = "Product name: " + data[element].Name + "<br />Price: "
+                            + data[element].Price + "<br />Amount: " + data[element].Amount;
+                        items += '<li>' + item + "</li>";
+                    }
+                    items += "</ul>";
+                    $('#content').html(items);
+                });
+            };
+
+            $('#search').keyup(function () {
+                var value = $(this).val().toLowerCase();
+
+                $('#productList li').each(function () {
+                    var search = $(this).text().toLowerCase();
+                    if (search.indexOf(value) > -1) {
+                        $(this).show();
+                    }
+                    else {
+                        $(this).hide();
+                    }
+                });
+            });
+
+            $('#btnSort').click(function () {
+                var list, i, siwtching, shouldSwitch;
+                list = document.getElementById("productList");
+                switching = true;
+                while (switching) {
+                    switching = false;
+                    b = list.getElementsByTagName('li');
+                    for (i = 0; i < (b.length - 1); i++) {
+                        shouldSwitch = false;
+                        if (b[i].innerHTML.toLowerCase() > b[i + 1].innerHTML.toLowerCase()) {
+                            shouldSwitch = true;
+                            break;
+                        }
+                    }
+                    if (shouldSwitch) {
+                        b[i].parentNode.insertBefore(b[i + 1], b[i]);
+                        switching = true;
+                    }
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1>Home</h1>
+
+    <h3>List of products:</h3>
+    <div id="content"></div>
+    <hr />
+
+    <div>
+        <label>Search Products</label>
+        <input type="text" id="search" placeholder="Filter list..." />
+    </div>
+    <hr />
+
+    <input type="button" value="Sort" id="btnSort" />
+</body>
+</html>
