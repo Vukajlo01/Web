@@ -21,7 +21,7 @@ namespace WebProject.Controllers
             var filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "App_Data/users.txt");
 
             // Check if the username is already taken
-            var lines = System.IO.File.ReadAllLines(filePath);
+            var lines = File.ReadAllLines(filePath);
             if (lines.Any(line => line.Split(';')[1] == user.Username))
                 return BadRequest("Username is already taken.");
 

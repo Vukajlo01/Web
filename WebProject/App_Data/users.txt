@@ -1,4 +1,1 @@
-﻿87632eec-25d4-4181-81f2-33b6931513d1,test,test,ADMIN
-ff1cf63d-381f-46ce-a689-ed13cd64be5a,test1,test,BUYER
-58dbe7f1-bbec-4559-b0bd-b743a2911a8a,test2,test,ADMIN
-ef112a53-c606-4110-bc9f-094d8cbec781,test3,test,SELLER
+﻿ee1db75a-8f54-47ba-a582-9e80349e26e9,test,test,ADMIN

@@ -6,6 +6,7 @@ using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
+using WebProject.Models;
 
 namespace WebProject
 {
@@ -18,6 +19,9 @@ namespace WebProject
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+            
+            Products products = new Products("~/App_Data/products.txt");
+            HttpContext.Current.Application["Products"] = products;
         }
     }
 }
