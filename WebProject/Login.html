@@ -1,0 +1,52 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>User Login</title>
+    <script src="Scripts/jquery-3.4.1.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#loginForm").submit(function (event) {
+                event.preventDefault();
+
+                // Get form data
+                var formData = {
+                    username: $("#username").val(),
+                    password: $("#password").val()
+                };
+
+                // Send POST request to login endpoint
+                $.ajax({
+                    type: "POST",
+                    url: "api/login",
+                    data: JSON.stringify(formData),
+                    contentType: "application/json",
+                    success: function (response) {
+                        alert("Login successful!");
+                        // Redirect to dashboard or perform any other action
+                    },
+                    error: function (error) {
+                        alert("Login failed: " + error.responseJSON.message);
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1>User Login</h1>
+    <form id="loginForm">
+        <div>
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+        </div>
+        <div>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <div>
+            <input type="submit" value="Login">
+        </div>
+    </form>
+</body>
+</html>
