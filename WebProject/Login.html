@@ -1,8 +1,12 @@
-﻿<!DOCTYPE html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
+
 <head>
-    <meta charset="utf-8" />
-    <title>User Login</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="loginstyle.css" />
+
     <script src="Scripts/jquery-3.4.1.js"></script>
     <script type="text/javascript">
         $(document).ready(function () {
@@ -22,8 +26,7 @@
                     data: JSON.stringify(formData),
                     contentType: "application/json",
                     success: function (response) {
-                        alert("Login successful!");
-                        window.location.href = "Index.html";
+                        window.location.href = "Index-novi.html";
                     },
                     error: function (error) {
                         alert("Login failed: " + error.responseJSON.message);
@@ -32,21 +35,22 @@
             });
         });
     </script>
+
 </head>
+
 <body>
-    <h1>User Login</h1>
-    <form id="loginForm">
-        <div>
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" required>
-        </div>
-        <div>
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required>
-        </div>
-        <div>
-            <input type="submit" value="Login">
-        </div>
-    </form>
+    <div class="container">
+        <p class="title">Login</p>
+        <form id="loginForm">
+          <p>Username:</p>
+          <input type="text" id="username"/>
+          <p>Password:</p>
+          <input type="password" id="password" /><br />
+          <input type="submit" value="Login"/><br />
+          <a href="Register.html">New user? Register here!</a>
+        </form>       
+        
+    </div>
 </body>
+    
 </html>

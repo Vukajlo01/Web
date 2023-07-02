@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="./loginstyle.css" />
+    
+    <script src="Scripts/jquery-3.4.1.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#registrationForm").submit(function (event) {
+                event.preventDefault();
+
+                // Get form data
+                var formData = {
+                    username: $("#username-input").val(),
+                    password: $("#password-input").val(),
+                    role: "BUYER"
+                };
+
+                // Send POST request to register endpoint
+                $.ajax({
+                    type: "POST",
+                    url: "api/register",
+                    data: JSON.stringify(formData),
+                    contentType: "application/json",
+                    success: function (response) {
+                        alert("Registration successful!");
+                        window.location.href = "Login.html";
+                    },
+                    error: function (error) {
+                        alert("Registration failed: " + error.responseJSON.message);
+                    }
+                });
+            });
+        });
+    </script>
+
+</head>
+
+<body>
+    <div class="container">
+        <p class="title">Register</p>
+        <form id="registrationForm">
+          <p id="username">Username:</p>
+          <input type="text" id="username-input" required/>
+          <p>Password:</p>
+          <input id="password-input" type="password" required/><br />
+          <input type="submit" value="Register"/><br />
+
+        </form>       
+        
+    </div>
+</body>
+    
+</html>
