@@ -6,6 +6,182 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Profile</title>
   <link rel="stylesheet" href="./profilestyle.css" />
+  <script src="Scripts/jquery-3.4.1.js"></script>
+  <script type="text/javascript">
+      $(document).ready(function () {
+
+        if(getCookie('Role') == 'BUYER'){
+            loadBuyerProducts();            
+        }
+        else if(getCookie('Role') == 'SELLER'){
+            loadSellerProducts();
+        }        
+
+        //TODO: ne ucitava nista jer nema product namesten ko mu je seller
+        function loadSellerProducts() {
+            $.get("api/products", function (data, status) {                   
+                for (element in data) {
+                    if(data[element].SellerUsername == getCookie('username')){
+                        let newProduct = '<div class="item-container">';
+                        newProduct += '<img class="image-class" src="./noImage.jpg" />';
+                        newProduct += '<p class="product-text">' + data[element].Name + '</p>';
+                        newProduct += '<p class="product-text">City</p>';
+                        newProduct += '<p class="product-text">' + data[element].Amount + '</p>';
+                        newProduct += '<p #id="price-id" class="product-text">' + data[element].Price + '</p>';
+                        newProduct += '<button class="button last">Remove</button>';
+                        newProduct += '</div>';
+                        $(".content-container").append(newProduct);
+                    }                    
+                }
+            });
+        }
+
+        //TODO: samo koje treba
+        function loadBuyerProducts() {
+            $.get("api/products", function (data, status) {                   
+                for (element in data) {
+                    //console.log(data[element].BuyerUsername);
+                    //console.log(getCookie('username'));
+                    //if(data[element].BuyerUsername == getCookie('username')){
+                        let newProduct = '<div class="item-container">';
+                        newProduct += '<img class="image-class" src="./noImage.jpg" />';
+                        newProduct += '<p class="product-text">' + data[element].Name + '</p>';
+                        newProduct += '<p class="product-text">City</p>';
+                        newProduct += '<p class="product-text">' + data[element].Amount + '</p>';
+                        newProduct += '<p #id="price-id" class="product-text">' + data[element].Price + '</p>';
+                        newProduct += '<button class="button last">Remove</button>';
+                        newProduct += '</div>';
+                        $(".content-container").append(newProduct);
+                    //}                    
+                }
+            });
+        }
+
+
+        function getCookie(cName) {
+            const name = cName + "=";
+            const cDecoded = decodeURIComponent(document.cookie); //to be careful
+            const cArr = cDecoded.split('; ');
+            let res;
+            cArr.forEach(val => {
+                if (val.indexOf(name) === 0) res = val.substring(name.length);
+            })
+            return res;
+        }
+
+        function deleteCookie(cName) {
+            document.cookie = cName + "=;expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";
+        }
+
+        //if(localStorage.getItem('isAuthenticated') == 1){
+        if (getCookie('isAuthenticated') == 1) {          
+            $('.login-btn').html("👤 Login");
+        }
+        else{
+            $('.login-btn').html("👤 Logout");
+        }
+
+
+        //if(localStorage.getItem('Role') == 'BUYER'){
+        if(getCookie('Role') == 'BUYER'){
+            $('#seller').hide();
+            $('#buyer').show();
+        }
+        //else if(localStorage.getItem('Role') == 'SELLER'){
+        else if (getCookie('Role') == 'SELLER') {
+            $('#buyer').hide();
+            $('#seller').show();
+        }
+        //else if(localStorage.getItem('Role') == 'ADMIN'){
+        else if (getCookie('Role') == 'ADMIN') {
+            $('#seller').show();
+            $('#buyer').show();
+        }
+        else {
+            $('#buyer').hide();
+            $('#seller').hide();
+        }
+
+        $('.items-btn').click(function(){
+            window.location.href = "Index.html"; 
+        })
+
+        $('.login-btn').click(function () {
+            /*if (localStorage.getItem('isAuthenticated') == 1) {
+                localStorage.removeItem('isAuthenticated');
+                localStorage.removeItem('Role');
+                window.location.href = "Index.html";
+            }*/
+            if (getCookie('isAuthenticated') == 1) {
+                deleteCookie('isAuthenticated');
+                deleteCookie('Role');
+                window.location.href = "Index.html";
+            }
+            else {
+                window.location.href = "Login.html";
+            }
+        }) 
+
+        //if (localStorage.getItem('isAuthenticated') == 1) {
+        if(getCookie('isAuthenticated') == 1){
+            $('.login-btn').html("👤 Logout");
+            $('.profile-btn').show();
+        }
+        else {
+            $('.login-btn').html("👤 Login");
+            $('.profile-btn').hide();
+        }
+
+        $('#add-product-btn').click(function(){            
+            window.location.href = "RegisterProduct.html";
+        })
+
+        function sort(selector, criteria, direction) {
+            $(selector).children().sort(function(a, b) {
+
+                var A, B;
+
+                switch (criteria) {
+                    case "name":
+                        A = $(a).children()[1].innerHTML.toLowerCase();
+                        B = $(b).children()[1].innerHTML.toLowerCase();
+                        break;
+                    case "price":
+                        A = $(a).children()[4].innerHTML;
+                        B = $(b).children()[4].innerHTML;
+                        break;
+                    /*case "date":
+                        A = $(a).children()[2].innerHTML.toLowerCase();
+                        B = $(b).children()[2].innerHTML.toLowerCase();
+                        break;
+                    */
+                    default:
+                        alert("Error");
+                }
+
+                var res = (A < B) ? -1 : (A > B) ? 1 : 0;
+
+                if(direction == "asc"){
+                    return res;
+                }
+                else {
+                    return res * (-1);
+                }
+
+            }).appendTo(selector);
+        }
+
+        $('.sort-select').change(function(e){
+            var valueSelected = this.value;                
+            var arr = valueSelected.split(",");
+            var criteria = arr[0];
+            var direction = arr[1];
+
+            sort(".content-container", criteria, direction);
+        }); 
+
+    });
+  </script>
 </head>
 
 <body>
@@ -13,7 +189,7 @@
         <div></div>
         <p class="title menu-item">Title</p>   
         <button class="items-btn menu-item">☰ Items</button>
-        <button class="profile-btn menu-item">/👤 Profile/</button>       
+        <button class="profile-btn menu-item">👤 Profile</button>       
         <!--<button class="cart-btn menu-item">🛒 Shopping cart</button>-->
         <button class="login-btn menu-item">👤 Log In</button>
     </div>
@@ -24,19 +200,18 @@
                 <table>
                     <tr>
                         <td><label>Username:</label></td>
-                        <td><input type="text" /></td>
+                        <td><label id="username-label"></label></td>
                     </tr>
                     <tr>
-                        <td><label>Password:</label></td>
-                        <td><input type="text"/></td>
+                        <td colspan="2"><input type="button" id="changePassword-btn" class="button" value="Change password"/></td>
                     </tr>
                     <tr>
                         <td><label>First Name:</label></td>
-                        <td><input type="text" /></td>
+                        <td><label id="firstname-label"></label></td>
                     </tr>
                     <tr>
                         <td><label>Last Name:</label></td>
-                        <td><input type="text" /></td>
+                        <td><label id="lastname-label"></label></td>
                     </tr>
                     <tr>
                         <td><label>Gender:</label></td>
@@ -52,36 +227,45 @@
                     </tr>
                     <tr>
                         <td><label>Birth date:</label></td>
-                        <td><input type="text" /></td>
+                        <td><input type="date" /></td>
                     </tr>
-                    <tr>
-                        <td><label>Role:</label></td>
-                        <td><input type="text" /></td>
-                    </tr>
+
                     <tr>                        
-                        <td colspan="2"><input id="save-btn" type="submit" value="Save" /></td>
+                        <td colspan="2"><input id="save-btn" type="submit" class="button" value="Save" /></td>
                     </tr>
                 </table>
             </form>            
         </div>
         <div class="right side">
-            <div>
+            <div id="buyer">
                 <input type="button" value="Active" class="button"/>
                 <input type="button" value="History" class="button"/>
                 <input type="button" value="Favourite" class="button"/>
+            </div>      
+
+            <div id="seller">
+                <div class="sort-container">
+                    <label class="sort-label">Sort by:</label>
+                    <select class="sort-select">
+                        <option value="name,asc">Name asc</option>
+                        <option value="name,desc">Name desc</option>
+                        <option value="price,asc">Price asc</option>
+                        <option value="price,desc">Price desc</option>
+                        <option value="date,asc">Publishing date asc</option>
+                        <option value="date,desc">Publishing date desc</option>
+                    </select>
+                    <select class="sort-select">
+                        <option value="available">Available</option>
+                        <option value="unavailable">Unavailable</option>                    
+                    </select>
+                    <input type="button" value="Add product" class="button" id="add-product-btn"/>
+                </div>                
             </div>
-            <div class="content-container">
-                <div class="item-container"></div>
-                <div class="item-container"></div>
-                <!--
-                <div class="item-container"></div>
-                <div class="item-container"></div>
-                <div class="item-container"></div>
-                <div class="item-container"></div>
-                <div class="item-container"></div>
-                -->
-            </div>
+
+            <div class="content-container"></div>
+            
         </div>
+        
     </div>
 
 </body>

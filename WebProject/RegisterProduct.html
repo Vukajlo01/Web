@@ -1,0 +1,110 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="./registerProductstyle.css" />
+
+    <script src="Scripts/jquery-3.4.1.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#registrationForm").submit(function (event) {
+                event.preventDefault();
+
+                /*console.log("nesto");
+                console.log($('#image-input'));
+                console.log($('#image-input').val());
+                console.log(document.getElementById('image-input'));
+                console.log(document.getElementById('image-input').files[0]);
+                */
+
+                function getCookie(cName) {
+                    const name = cName + "=";
+                    const cDecoded = decodeURIComponent(document.cookie); //to be careful
+                    const cArr = cDecoded.split('; ');
+                    let res;
+                    cArr.forEach(val => {
+                        if (val.indexOf(name) === 0) res = val.substring(name.length);
+                    })
+                    return res;
+                }
+
+                // Get form data
+                var formData = {
+                    name: $("#name-input").val(),
+                    price: $("#price-input").val(),
+                    amount: $("#amount-input").val(),
+                    sellerUsername: getCookie('username'),
+                    description: $("#description-input").val(),
+                    city: $("#city-input").val(),
+                    //productImage: document.getElementById('image-input').files[0]
+                    //imagePath: $("#image-input").val()
+                };
+
+                // Send POST request to register endpoint
+                $.ajax({
+                    type: "POST",
+                    url: "api/registerProduct",
+                    data: JSON.stringify(formData),
+                    contentType: "application/json",
+                    success: function (response) {
+                        alert("Registration successful!");
+                        window.location.href = "Profile.html";
+                    },
+                    error: function (error) {
+                        alert("Registration failed: " + error.responseJSON.message);
+                    }
+                });
+            });
+        });
+    </script>
+
+</head>
+
+<body>
+    <div class="menu-container">
+        <div></div>
+        <p class="title menu-item">Title</p>  
+        <button class="items-btn menu-item">☰ Items</button>
+        <button class="profile-btn menu-item">👤 Profile</button>      
+        <!--<button class="cart-btn menu-item">🛒 Shopping cart</button>-->
+        <button name="loginOut" class="login-btn menu-item">👤 Login/out</button>
+    </div>
+
+    <div class="container">
+        <p id="title">Add product</p>
+        <form id="registrationForm">
+            <div class="flex">
+                <label id="name">Name:</label><br />
+                <input type="text" id="name-input" required /><br />
+
+                <label>Price:</label><br />
+                <input id="price-input" type="number" required /><br />
+
+                <label id="amount">Amount:</label><br />
+                <input type="number" id="amount-input" required /><br />
+
+                <label id="city">City:</label><br />
+                <input type="text" id="city-input" required /><br />
+
+                <label id="description">Description:</label><br />
+                <textarea id="description-input" rows="4" cols="36"></textarea><br /><br />
+
+                <!--<input type="text" id="description-input" required /><br />-->
+
+                <!--<label id="image">Image:</label>
+                <input id="image-input" type="file" accept="image/jpeg, image/png, image/jpg" required /><br />
+                -->
+
+                <input type="submit" value="Add product" /><br />
+            </div>
+            
+
+        </form>
+
+    </div>
+</body>
+
+</html>

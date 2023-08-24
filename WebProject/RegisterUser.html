@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="./registerUserstyle.css" />
+    
+    <script src="Scripts/jquery-3.4.1.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#registrationForm").submit(function (event) {
+                event.preventDefault();
+
+                // Get form data
+                var formData = {
+                    username: $("#username-input").val(),
+                    password: $("#password-input").val(),
+                    role: "BUYER",
+                    firstname: $("#firstname-input").val(),
+                    lastname: $("#lastname-input").val(),
+                    gender: $("#gender-input").val(),
+                    email: $("#email-input").val(),
+                    birthdate: $("#birthdate-input").val()
+                };
+
+                // Send POST request to register endpoint
+                $.ajax({
+                    type: "POST",
+                    url: "api/registerUser",
+                    data: JSON.stringify(formData),
+                    contentType: "application/json",
+                    success: function (response) {
+                        alert("Registration successful!");
+                        window.location.href = "Login.html";
+                    },
+                    error: function (error) {
+                        alert("Registration failed: " + error.responseJSON.message);
+                    }
+                });
+            });
+        });
+    </script>
+
+</head>
+
+<body>
+    <div class="container">
+        <p class="title">Register</p>
+        <form id="registrationForm">
+            <div class="flex">
+                <label id="username">Username:</label>
+                <input type="text" id="username-input" required/><br />
+    
+                <label>Password:</label>
+                <input id="password-input" type="password" required/><br />
+    
+                <label id="firstname">First Name:</label>
+                <input type="text" id="firstname-input" required/><br />
+    
+                <label id="lastname">Last Name:</label>
+                <input type="text" id="lastname-input" required/><br />
+    
+                <label id="gender">Gender:</label>
+                <select id="gender-input" required>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                </select><br />
+    
+                <label id="email">E-mail:</label>
+                <input type="email" id="email-input" required/><br />
+    
+                <label id="birthdate">Birthdate:</label>
+                <input type="date" id="birthdate-input" required/><br />
+    
+    
+                <input type="submit" value="Register"/><br />
+              </div>
+
+        </form>       
+        
+    </div>
+</body>
+    
+</html>

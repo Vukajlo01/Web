@@ -19,6 +19,13 @@
                     password: $("#password").val()
                 };
 
+                function setCookie(cName, cValue, expDays) {
+                    let date = new Date();
+                    date.setTime(date.getTime() + (expDays * 24 * 60 * 60 * 1000));
+                    const expires = "expires=" + date.toUTCString();
+                    document.cookie = cName + "=" + cValue + "; " + expires + "; path=/";
+                }
+
                 // Send POST request to login endpoint
                 $.ajax({
                     type: "POST",
@@ -26,7 +33,20 @@
                     data: JSON.stringify(formData),
                     contentType: "application/json",
                     success: function (response) {
-                        window.location.href = "Index-novi.html";
+                        //localStorage.setItem('isAuthenticated', 1);
+
+                        setCookie('isAuthenticated', 1, 1);
+                        setCookie('username', response.Username, 1);
+                        
+                        switch (response.Role) {
+                            case 0: setCookie('Role', 'BUYER', 1);
+                                    break;
+                            case 1: setCookie('Role', 'SELLER', 1);
+                                    break;
+                            case 2: setCookie('Role', 'ADMIN', 1);
+                                    break;
+                        }
+                        window.location.href = "Index.html";
                     },
                     error: function (error) {
                         alert("Login failed: " + error.responseJSON.message);
@@ -45,12 +65,11 @@
           <p>Username:</p>
           <input type="text" id="username"/>
           <p>Password:</p>
-          <input type="password" id="password" /><br />
+          <input type="password" id="password"/><br />
           <input type="submit" value="Login"/><br />
-          <a href="Register.html">New user? Register here!</a>
+          <a href="RegisterUser.html">New user? Register here!</a>
         </form>       
-        
-    </div>
+        </div>
 </body>
     
 </html>

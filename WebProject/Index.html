@@ -1,8 +1,12 @@
-﻿<!DOCTYPE html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
+
 <head>
-    <meta charset="utf-8" />
-    <title></title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" href="./indexstyle.css" />
+
     <script src="Scripts/jquery-3.4.1.js"></script>
     <script type="text/javascript">
         $(document).ready(function () {
@@ -10,84 +14,248 @@
             loadProducts();
 
             function loadProducts() {
-                $.get("api/products", function (data, status) {
-                    let tableOfProducts = '<table border="1" id="productTable">';
-                    tableOfProducts += '<tr id="header"><th>Name</th><th>Price</th><th>Amount</th></tr>';
+                $.get("api/products", function (data, status) {                   
                     for (element in data) {
-                        let product = '<td class="productName">' + data[element].Name + '</td>'; 
-                        product += '<td class="productPrice">' + data[element].Price + '</td>';
-                        product += '<td>' + data[element].Amount + '</td>';
-                        tableOfProducts += '<tr class="productRow">' + product + '</tr>';
+                        let newProduct = '<div class="item-container accordion">';
+                        newProduct += '<img class="image-class" src="./noImage.jpg" />';
+                        newProduct += '<p class="product-text">' + data[element].Name + '</p>';
+                        newProduct += '<p class="product-text">City</p>';
+                        newProduct += '<p class="product-text">' + data[element].Amount + '</p>';
+                        newProduct += '<p #id="price-id" class="product-text">' + data[element].Price + '</p>';
+                        newProduct += '<button class="star-btn">☆</button>';
+                        newProduct += '<button class="button last">Buy</button>';
+                        newProduct += '<div class="panel" style="display:none">' + data[element].Description + '</div>'
+                        newProduct += '</div>';
+                        $(".content-container").append(newProduct);
                     }
-                    tableOfProducts += '</table>';
-                    $('#content').html(tableOfProducts);
-
                 });
             }
 
-            $('#search').keyup(function () {
-                var value = $(this).val().toLowerCase();
-                console.log("asd")
-                $('.productRow').each(function () {
-                    var searchName = $(this).find('.productName').text().toLowerCase();
-                    var searchPrice = $(this).find('.productPrice').text().toLowerCase();
-                    if (searchName.indexOf(value) > -1 || (searchPrice.indexOf(value)) > -1) {
-                        $(this).show();
+
+
+
+            function getCookie(cName) {
+                const name = cName + "=";
+                const cDecoded = decodeURIComponent(document.cookie); //to be careful
+                const cArr = cDecoded.split('; ');
+                let res;
+                cArr.forEach(val => {
+                    if (val.indexOf(name) === 0) res = val.substring(name.length);
+                })
+                return res;
+            }
+
+            function deleteCookie(cName) {               
+                document.cookie = cName + "=;expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";
+            }
+
+            /*
+            <div class="item-container">
+               <img class="image-class" src="./noImage.jpg" />
+               <p class="product-text"> data[element].Name </p>
+               <p class="product-text"> City </p>
+               <p class="product-text"> data[element].Amount </p>
+               <p class="product-text"> data[element].Price </p>
+               <button id="star">⭐</button>
+               <button class="button last">Buy</button>
+            </div>
+            */
+
+            function sort(selector, criteria, direction) {
+                $(selector).children().sort(function(a, b) {
+
+                    var A, B;
+
+                    switch (criteria) {
+                        case "name":
+                            A = $(a).children()[1].innerHTML.toLowerCase();
+                            B = $(b).children()[1].innerHTML.toLowerCase();
+                            break;
+                        case "price":
+                            A = $(a).children()[4].innerHTML;
+                            B = $(b).children()[4].innerHTML;
+                            break;
+                        case "city":
+                            A = $(a).children()[2].innerHTML.toLowerCase();
+                            B = $(b).children()[2].innerHTML.toLowerCase();
+                            break;
+                        default:
+                            alert("Error");
+                    }
+
+                    var res = (A < B) ? -1 : (A > B) ? 1 : 0;
+
+                    if(direction == "asc"){
+                        return res;
                     }
                     else {
-                        $(this).hide();
+                        return res * (-1);
                     }
+
+                }).appendTo(selector);
+            }
+
+            $('select').change(function(e){
+                var valueSelected = this.value;               
+                var arr = valueSelected.split(",");
+                var criteria = arr[0];
+                var direction = arr[1];
+                sort(".content-container", criteria, direction);
+            }); 
+
+            $('#filter-form').submit(function(e) {
+                e.preventDefault();               
+                
+                var nameVal = $('#name').val().trim();
+                var minPriceVal = $('#min-price').val().trim();
+                var maxPriceVal = $('#max-price').val().trim();
+                var cityVal = $('#city').val().trim();
+
+                $(".item-container").each(function(){
+                    $(this).show();
+                });
+
+                $(".item-container").each(function(){
+                    var name = $(this).children()[1].innerHTML.toLowerCase();
+                    var price = $(this).children()[4].innerHTML;
+                    var city = $(this).children()[2].innerHTML.toLowerCase();
+
+                    if(nameVal){
+                        if(name.indexOf(nameVal.toLowerCase()) == -1){
+                            $(this).hide();
+                        }
+                    }
+                    if(minPriceVal){
+                        if(price < minPriceVal){
+                            $(this).hide();
+                        }
+                    }
+                    if(maxPriceVal){
+                        if(price > maxPriceVal){
+                            $(this).hide();
+                        }
+                    }
+                    if(cityVal){
+                        if(city.indexOf(cityVal.toLowerCase()) == -1){
+                            $(this).hide();
+                        }
+                    }
+
                 });
             });
 
-            //$("tr#header").click(function () {        // function_tr
-            //    $(this).css("background-color", "yellow");
-            //});
+            $('.content-container').on('click', '.star-btn', function (event) {
+                event.stopPropagation();
+                if($(this).html() == '☆'){
+                    $(this).html("★");
+                }
+                else{                    
+                    $(this).html("☆");
+                }
+            });
 
-            //$('#header').click(function () {
-            //    var dir = $(this).attr('data-dir') || 'desc';
-            //    dir = dir == 'asc' ? 'desc' : 'asc';
-            //    $(this).attr('data-dir', dir)
-            //    alert(dir)
+            //console.log(localStorage.getItem('isAuthenticated'));
 
-            //});
+            $('.login-btn').click(function(){
+                /*if (localStorage.getItem('isAuthenticated') == 1) {
+                    localStorage.removeItem('isAuthenticated');
+                    localStorage.removeItem('Role');
+                    location.reload();                                    
+                }*/
+                if (getCookie('isAuthenticated') == 1) {
+                    deleteCookie('isAuthenticated')
+                    deleteCookie('Role');
+                    deleteCookie('username')
+                }
+                else{
+                    window.location.href = "Login.html";                
+                }                 
+            })  
+            
+            $('.profile-btn').click(function(){
+                window.location.href = "Profile.html"; 
+            })
 
-            //$('#btnSort').click(function () {
-            //    var list, i, switching, shouldSwitch;
-            //    list = document.getElementById("productList");
-            //    switching = true;
-            //    while (switching) {
-            //        switching = false;
-            //        b = list.getElementsByTagName('li');
-            //        for (i = 0; i < (b.length - 1); i++) {
-            //            shouldSwitch = false;
-            //            if (b[i].innerHTML.toLowerCase() > b[i + 1].innerHTML.toLowerCase()) {
-            //                shouldSwitch = true;
-            //                break;
-            //            }
-            //        }
-            //        if (shouldSwitch) {
-            //            b[i].parentNode.insertBefore(b[i + 1], b[i]);
-            //            switching = true;
-            //        }
-            //    }
-            //});
+            /*if(localStorage.getItem('isAuthenticated') == 1){
+                $('.login-btn').html("👤 Logout");
+                $('.profile-btn').show();
+                
+            }*/
+            if (getCookie('isAuthenticated') == 1) {
+                $('.login-btn').html("👤 Logout");
+                $('.profile-btn').show();
+            }
+            else{
+                $('.login-btn').html("👤 Login");
+                $('.profile-btn').hide();
+            }
+            
+            $('.content-container').on('click', '.accordion', function() {   
+                this.classList.toggle("active");
+                var panel =  $(this).find(".panel")[0];
+                if (panel.style.display === "block") {
+                    panel.style.display = "none";
+                } else {
+                    panel.style.display = "block";
+                }
+            })
         });
     </script>
+
 </head>
+
 <body>
-    <h1>Home</h1>
-
-    <h3>List of products:</h3>
-    <div id="content"></div>
-    <hr />
-
-    <div>
-        <label>Search Products (by Name or Price): </label>
-        <input type="text" id="search" placeholder="Filter list..." />
+    <div class="menu-container">
+        <div></div>
+        <p class="title menu-item">Title</p>  
+        <button class="items-btn menu-item">☰ Items</button>
+        <button class="profile-btn menu-item">👤 Profile</button>      
+        <!--<button class="cart-btn menu-item">🛒 Shopping cart</button>-->
+        <button name="loginOut" class="login-btn menu-item">👤 Login/out</button>
     </div>
-    <hr />
+    <div class="grid-container">
+        <div class="search-container">
+            <form id="filter-form">
+                <p>Search by name:</p>
+                <input type="text" id="name" /></td>
 
-    <input type="button" value="Sort" id="btnSort" />
+                <p>Search by price:</p>
+                <input id="min-price" class="min-price-input" type="text" />
+                <label> - </label>
+                <input id="max-price" class="max-price-input" type="text" />
+
+                <p>Search by city:</p>
+                <input id="city" type="text" />
+
+                <input type="submit" value="Search" />
+            </form>            
+        </div>
+        <div class="sort-container">
+            <label class="sort-label">Sort by:</label>
+            <select class="sort-select">
+                <option value="name,asc">Name asc</option>
+                <option value="name,desc">Name desc</option>
+                <option value="price,asc">Price asc</option>
+                <option value="price,desc">Price desc</option>
+                <option value="city,asc">City asc</option>
+                <option value="city,desc">City desc</option>
+            </select>
+        </div>
+
+        <div class="content-container">
+            <!--<div id="header">
+                <p class="product-text">Name/</p>
+                <p class="product-text">City/</p>
+                <p class="product-text">Amount/</p>
+                <p #id="price-id" class="product-text">Price</p>
+            </div>
+            -->
+                
+
+
+        </div>
+
+    </div>
 </body>
+    
 </html>

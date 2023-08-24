@@ -12,7 +12,7 @@ namespace WebProject.Controllers
     public class UserController : ApiController
     {
         [HttpPost]
-        [Route("api/register")]
+        [Route("api/registerUser")]
         public IHttpActionResult Register(User user)
         {
             if (!ModelState.IsValid)
@@ -29,7 +29,8 @@ namespace WebProject.Controllers
             user.Id = Guid.NewGuid();
 
             // Serialize the user object to a string
-            var userData = $"{user.Id};{user.Username};{user.Password};{user.Role}";
+            var userData = $"{user.Id};{user.Username};{user.Password};{user.Role};" +
+                $"{user.FirstName};{user.LastName};{user.Gender};{user.Email};{user.Birthdate}";
 
             // Append the user data to the text file
             using (var writer = new StreamWriter(filePath, true))
@@ -38,6 +39,57 @@ namespace WebProject.Controllers
             }
 
             return Ok("Registration successful!");
+        }
+
+        [HttpGet]
+        [Route("api/profile")]
+        public IHttpActionResult Profile(string username)
+        {
+            var filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "App_Data/users.txt");
+
+            var lines = File.ReadAllLines(filePath);
+            var existingUser = lines.FirstOrDefault(line =>
+            {
+                var d = line.Split(';');
+                return d[1] == username;
+            });
+
+            if (existingUser == null)
+                return BadRequest("Username doesn't exist.");
+
+            var data = existingUser.Split(';');
+
+            var role = data[3];
+            Role roleEnum;
+
+            if (role == Role.ADMIN.ToString())
+            {
+                roleEnum = Role.ADMIN;
+            }
+            else if (role == Role.SELLER.ToString())
+            {
+                roleEnum = Role.SELLER;
+            }
+            else
+            {
+                roleEnum = Role.BUYER;
+            }
+
+
+            // Create a user object with the retrieved role
+            var user = new User
+            {
+                Id = Guid.Parse(data[0]),
+                Username = username,
+                FirstName = data[4],
+                LastName = data[5],
+                Gender = data[6],
+                Email = data[7],
+                Birthdate = DateTime.Parse(data[8]),
+                Role = roleEnum
+            };
+
+            return Ok(user);
         }
 
         [HttpPost]
