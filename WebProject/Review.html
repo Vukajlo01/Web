@@ -4,12 +4,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register</title>
-    <link rel="stylesheet" href="./registerProductstyle.css" />
+    <title>Edit</title>
+    <link rel="stylesheet" href="./reviewstyle.css" />
 
     <script src="Scripts/jquery-3.4.1.js"></script>
     <script type="text/javascript">
         $(document).ready(function () {
+
+            getProduct();
+
+            function getProduct() {
+                var param;
+                let searchParams = new URLSearchParams(window.location.search);
+                if (searchParams.has('guid')) {
+                    param = searchParams.get('guid');
+                }
+
+                $.get("api/products", function (data, status) {
+                    for (element in data) {
+                        if (data[element].Id == param) {
+                            $('#name-label').text(data[element].Name);
+                            $('#price-label').text(data[element].Price);
+                            $('#amount-label').text(data[element].Amount);
+                            $('#city-label').text(data[element].City);
+                            $('#description-input').val(data[element].Description);
+                            $('#productId').text(data[element].Id);
+                        }
+                    }
+                });
+
+                if ($('#amount-label').text == 0) {
+                    $('buy-btn').hide();
+                }
+                else {
+                    $('buy-btn').show();
+                }
+            }
 
             $('#back-btn').click(function(){
                 console.log("Back btn clicked");
@@ -69,51 +99,43 @@
                 document.cookie = cName + "=;expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";
             }
 
-            $("#registrationForm").submit(function (event) {
+            $('#back-btn').click(function () {
+                window.location.href = "Profile.html";
+            })
+
+            $("#review-form").submit(function (event) {
                 event.preventDefault();
 
-                console.log("register form submit");
+                var username = getCookie('username');
 
-                /*console.log("nesto");
-                console.log($('#image-input'));
-                console.log($('#image-input').val());
-                console.log(document.getElementById('image-input'));
-                console.log(document.getElementById('image-input').files[0]);
-                */
-
-                // Get form data
                 var formData = {
-                    name: $("#name-input").val(),
-                    price: $("#price-input").val(),
-                    amount: $("#amount-input").val(),
-                    sellerUsername: getCookie('username'),
-                    description: $("#description-input").val(),
-                    city: $("#city-input").val(),
+                    Title: $("#title-input").val(),
+                    Content: $("#review-input").val(),
+                    Username: username
                 };
-
+                // Send POST request to register endpoint
                 $.ajax({
                     type: "POST",
-                    url: "api/products",
+                    url: "api/product/" + $("#productId").text() + "/reviews",
                     data: JSON.stringify(formData),
                     contentType: "application/json",
                     success: function (response) {
                         console.log(response);
-                        alert("Registration successful!"); 
-                        
+                        alert("Review submitted!");
+
                         var data = new FormData();
                         jQuery.each(jQuery('#file')[0].files, function (i, file) {
                             data.append('file-' + i, file);
                         });
 
-
                         $.ajax({
                             type: "POST",
                             enctype: 'multipart/form-data',
-                            url: "/api/product/" + response + "/image",
+                            url: "/api/review/" + response + "/image",
                             data: data,
                             processData: false,
                             contentType: false,
-                            cache: false,      
+                            cache: false,
                             success: function (response) {
                                 alert("Registration successful!");
                                 window.location.href = "Profile.html";
@@ -125,11 +147,12 @@
                         });
                     },
                     error: function (error) {
-                        alert("Registration failed: " + error.responseJSON.message);
+                        alert("Review submit failed!: " + error.responseJSON.message);
                     }
-                });              
+                });
 
             });
+
         });
     </script>
 
@@ -146,41 +169,45 @@
     </div>
 
     <div class="container">
-        <p id="title">Add product</p>
-        <form method="POST" enctype="multipart/form-data" id="registrationForm">
+        <p id="title">Product review</p>
+        
+        <div id="product-container">
             <div class="flex">
-                <label id="name">Name:</label><br />
-                <input type="text" id="name-input" required /><br />
+                <h1> Product</h1>
+                <label id="productId" hidden></label>
+                <label id="name">Name:</label><label id="name-label"></label><br />
 
-                <label>Price:</label><br />
-                <input id="price-input" type="number" required /><br />
+                <label id="price">Price:</label><label id="price-label"></label><br />
 
-                <label id="amount">Amount:</label><br />
-                <input type="number" id="amount-input" required /><br />
+                <label id="amount">Amount:</label><label id="amount-label"></label><br />
 
-                <label id="city">City:</label><br />
-                <input type="text" id="city-input" required /><br />
+                <label id="city">City:</label><label id="city-label"></label><br />
 
                 <label id="description">Description:</label><br />
-                <textarea id="description-input" rows="5" cols="40"></textarea><br /><br />
+                <textarea id="description-input" rows="5" cols="40" readonly></textarea><br /><br />
+            </div>
+        </div>
+
+        <div id="review-container">
+            <form id="review-form">
+                <h1>Review</h1>
+
+                <label>Title:</label>
+                <input type="text" id="title-input" />          
+                
+                <label>Review:</label><br />
+                <textarea id="review-input" rows="10" cols="65"></textarea><br /><br />
 
                 <label>Choose picture:</label>
-                <input type="file" id="file" name="file" accept="image/*"><br />
+                <input type="file" id="file" accept="image/*"><br /><br />
 
-                <!--<input type="text" id="description-input" required /><br />-->
-
-                <!--<label id="image">Image:</label>
-                <input id="image-input" type="file" accept="image/jpeg, image/png, image/jpg" required /><br />
-                -->
-
-                <button id="back-btn" type="button">Back</button>
-                <input type="submit" value="Add product" /><br />
-            </div>
-            
-
-        </form>
+                <button id="back-btn" class="button" type="button">Back</button> 
+                <input type="submit"value="Post review" /><br />
+            </form>
+        </div>
 
     </div>
+
 </body>
 
 </html>

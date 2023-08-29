@@ -1,6 +1,6 @@
-body {
+﻿body {
     margin: 0;
-    background-color: rgb(160, 187, 238);
+    background-color:  rgb(160, 187, 238);
 }
 
 .menu-container {
@@ -20,7 +20,6 @@ body {
     font-size: 24px;
 }
 
-
 .title {
     font-size: 50px;
     margin-right: auto;
@@ -28,10 +27,8 @@ body {
     font-weight: bold;
 }
 
-#title {
-    font-size: 35px;
-    font-weight: bold;
-    color:white;
+.cart-btn {
+    width: 200px;
 }
 
 .login-btn {
@@ -47,29 +44,36 @@ body {
     width: 160px;
 }
 
-input {
-    width: 200px;
-    height: 30px;
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
 }
 
-textarea {
-    resize: none;
-  }
+.image {
+    background-color: white;
+    float: left;
+    height: 100px;
+    width: 100px;
+    margin: 10px;
+}
 
-input[type=submit], button {
+.button {
     background-color: orange;
     color: white;
     border: none;
     border-radius: 5px;
-    padding: 10px;
+    padding: 10px;    
+    margin-top: 10px;
+    margin-left: 80px;
     width: 150px;
     height: 30px;
-    margin-right: 8px;
 }
 
-.container {
-    display: flex;
-    flex-direction: column;
-    
-    margin-left: 30px;
+table {
+    margin-top: 10px;
+}
+
+#user-table {
+    margin-left: 5px;
 }

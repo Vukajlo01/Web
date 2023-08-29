@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Security.Policy;
@@ -10,30 +12,32 @@ namespace WebProject.Models
 {
     public class Product
     {
-        public Guid ProductId { get; set; }
+        [Key]
+        public Guid Id { get; set; }
         public string Name { get; set; }
         public double Price { get; set; }
         public int Amount { get; set; }
         public string SellerUsername { get; set; }      
         public string Description { get; set; }
-        public string ImagePath { get; set; }
-        public Byte[] ProductImage { get; set; }
-        public DateTime PublishingDate { get; set; } //dd/MM/yyyy
+        public DateTime PublishingDate { get; set; }
         public string City { get; set; }
-        public List<Review> reviews { get; set; }
         public bool Available { get; set; }
 
-        public Product(Guid productId, string name, double price, int amount, string sellerUsername, string description, DateTime publishingDate, string city, bool available)
+        public Product()
         {
-            ProductId = productId;
-            Name = name;
-            Price = price;
-            Amount = amount;
-            SellerUsername = sellerUsername;
-            Description = description;
-            PublishingDate = publishingDate;
-            City = city;
-            Available = available;
+        }
+
+        public Product(string[] tokens)
+        {
+            Id = Guid.Parse(tokens[0]);
+            Name = tokens[1];
+            Price = double.Parse(tokens[2]);
+            Amount = int.Parse(tokens[3]);
+            SellerUsername = tokens[4];
+            Description = tokens[5];
+            PublishingDate = DateTime.ParseExact(tokens[6], "yyyy-MM-dd", CultureInfo.InvariantCulture);
+            City = tokens[7];
+            Available = bool.Parse(tokens[8]);
         }
     }
 }

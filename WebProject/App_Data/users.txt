@@ -1,4 +1,4 @@
-﻿054f221b-489c-4b9d-9b66-40ad69cde886;buyer;buyer;BUYER;buyerName;buyerLastname;male;buyer@gmail.com;7/12/2023 12:00:00 AM
-8e3344fd-2d91-44aa-94f4-d06a7f0a6b9f;newuser;newuser;BUYER;new;user;male;newuser@gmail.com;5/5/2005 12:00:00 AM
-218579ce-d706-46df-a9f1-b997deb84807;dfg;dfg;BUYER;d;fg;male;dfg@gmail.com;2/2/2002 12:00:00 AM
-218579ce-d706-34ds-a9f1-b997deb84807;seller;seller;SELLER;seller;seller;male;seller@gmail.com;1/1/2001 12:00:00 AM
+cbaee4e9-8f64-405f-af57-131d6bb4cd93;seller1;seller1;SELLER;Seller;One;male;seller1@gmail.com;2001-01-01;;
+135aec79-8445-497e-889d-c42e93e0a697;buyer1;buyer1;BUYER;Buyer;One;female;buyer1@gmail.com;2002-02-02;;
+8e07f63e-2d28-42b5-8837-91144f6f7558;admin;admin;ADMIN;Admin;Admin;male;admin@gmail.com;1990-01-01;;
+957ef42d-2f1f-4e29-9c0c-785b08a8beee;seller2;seller2;SELLER;Seller;Two;female;seller2@gmail.com;1995-03-03;;

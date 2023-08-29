@@ -10,6 +10,7 @@
     <script src="Scripts/jquery-3.4.1.js"></script>
     <script type="text/javascript">
         $(document).ready(function () {
+
             $("#registrationForm").submit(function (event) {
                 event.preventDefault();
 
@@ -28,7 +29,7 @@
                 // Send POST request to register endpoint
                 $.ajax({
                     type: "POST",
-                    url: "api/registerUser",
+                    url: "api/auth/register",
                     data: JSON.stringify(formData),
                     contentType: "application/json",
                     success: function (response) {
@@ -36,7 +37,7 @@
                         window.location.href = "Login.html";
                     },
                     error: function (error) {
-                        alert("Registration failed: " + error.responseJSON.message);
+                        alert("Registration failed: " + error.responseJSON);
                     }
                 });
             });

@@ -4,12 +4,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register</title>
-    <link rel="stylesheet" href="./registerProductstyle.css" />
+    <title>Edit</title>
+    <link rel="stylesheet" href="./editProduct.css" />
 
     <script src="Scripts/jquery-3.4.1.js"></script>
     <script type="text/javascript">
         $(document).ready(function () {
+
+
+            getProduct();
+
+            function getProduct() {
+                var param;
+                let searchParams = new URLSearchParams(window.location.search);
+                if(searchParams.has('guid')){
+                    param = searchParams.get('guid');
+                }
+
+                $.get("api/products", function (data, status) {                   
+                    for (element in data) {
+
+                        if(data[element].Id == param){
+                            $('#name-input').val(data[element].Name);
+                            $('#price-input').val(data[element].Price);
+                            $('#amount-input').val(data[element].Amount);
+                            $('#city-input').val(data[element].City);
+                            $('#description-input').val(data[element].Description);
+                            $('.product-id').val(data[element].Id);
+                            console.log($('.product-id').val());
+                        }
+                    }
+                });
+            }
+
 
             $('#back-btn').click(function(){
                 console.log("Back btn clicked");
@@ -70,7 +97,7 @@
             }
 
             $("#registrationForm").submit(function (event) {
-                event.preventDefault();
+                event.preventDefault();                
 
                 console.log("register form submit");
 
@@ -83,52 +110,31 @@
 
                 // Get form data
                 var formData = {
-                    name: $("#name-input").val(),
-                    price: $("#price-input").val(),
-                    amount: $("#amount-input").val(),
-                    sellerUsername: getCookie('username'),
-                    description: $("#description-input").val(),
-                    city: $("#city-input").val(),
+                    Id: $(".product-id").val(),
+                    Name: $("#name-input").val(),
+                    Price: $("#price-input").val(),
+                    Amount: $("#amount-input").val(),
+                    SellerUsername: getCookie('username'),
+                    Description: $("#description-input").val(),
+                    City: $("#city-input").val()
+                    //productImage: document.getElementById('image-input').files[0]
+                    //imagePath: $("#image-input").val()
                 };
 
+                // Send PUT request to register endpoint
                 $.ajax({
-                    type: "POST",
-                    url: "api/products",
+                    type: "PUT",
+                    url: `api/product/${formData.Id}`,
                     data: JSON.stringify(formData),
                     contentType: "application/json",
                     success: function (response) {
-                        console.log(response);
-                        alert("Registration successful!"); 
-                        
-                        var data = new FormData();
-                        jQuery.each(jQuery('#file')[0].files, function (i, file) {
-                            data.append('file-' + i, file);
-                        });
-
-
-                        $.ajax({
-                            type: "POST",
-                            enctype: 'multipart/form-data',
-                            url: "/api/product/" + response + "/image",
-                            data: data,
-                            processData: false,
-                            contentType: false,
-                            cache: false,      
-                            success: function (response) {
-                                alert("Registration successful!");
-                                window.location.href = "Profile.html";
-                            },
-                            error: function (error) {
-                                alert("Registration failed.");
-                                window.location.href = "Profile.html";
-                            }
-                        });
+                        alert("Registration successful!");
+                        window.location.href = "Profile.html";
                     },
                     error: function (error) {
-                        alert("Registration failed: " + error.responseJSON.message);
+                        alert("Edit failed.");                        
                     }
-                });              
-
+                });
             });
         });
     </script>
@@ -146,9 +152,12 @@
     </div>
 
     <div class="container">
-        <p id="title">Add product</p>
-        <form method="POST" enctype="multipart/form-data" id="registrationForm">
+        <p id="title">Edit product</p>
+        <form id="registrationForm">
             <div class="flex">
+                
+                <label hidden class="product-id"></label>
+
                 <label id="name">Name:</label><br />
                 <input type="text" id="name-input" required /><br />
 
@@ -164,9 +173,6 @@
                 <label id="description">Description:</label><br />
                 <textarea id="description-input" rows="5" cols="40"></textarea><br /><br />
 
-                <label>Choose picture:</label>
-                <input type="file" id="file" name="file" accept="image/*"><br />
-
                 <!--<input type="text" id="description-input" required /><br />-->
 
                 <!--<label id="image">Image:</label>
@@ -174,7 +180,7 @@
                 -->
 
                 <button id="back-btn" type="button">Back</button>
-                <input type="submit" value="Add product" /><br />
+                <input type="submit" value="Save" /><br />
             </div>
             
 

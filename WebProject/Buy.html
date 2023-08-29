@@ -1,0 +1,181 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buy</title>
+    <link rel="stylesheet" href="./buystyle.css" />
+
+    <script src="Scripts/jquery-3.4.1.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            getProduct();
+
+            function getProduct() {
+                var param;
+                let searchParams = new URLSearchParams(window.location.search);
+                if (searchParams.has('guid')) {
+                    param = searchParams.get('guid');
+                }
+
+                $.get("api/products", function (data, status) {
+                    for (element in data) {
+
+                        if (data[element].Id == param) {
+                            $('#name-label').text(data[element].Name);
+                            $('#price-label').text(data[element].Price);
+                            $('#amount-label').text(data[element].Amount);
+                            $('#city-label').text(data[element].City);
+                            $('#description-input').val(data[element].Description);
+                            $('#id').val(data[element].Id);
+                        }
+                    }
+                });
+
+                if ($('#amount-label').text == 0) {
+                    $('buy-btn').hide();
+                }
+                else {
+                    $('buy-btn').show();
+                }
+            }
+
+            function getCookie(cName) {
+                const name = cName + "=";
+                const cDecoded = decodeURIComponent(document.cookie); //to be careful
+                const cArr = cDecoded.split('; ');
+                let res;
+                cArr.forEach(val => {
+                    if (val.indexOf(name) === 0) res = val.substring(name.length);
+                })
+                return res;
+            }
+
+            function deleteCookie(cName) {
+                document.cookie = cName + "=;expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";
+            }
+
+            $('.profile-btn').click(function () {
+                window.location.href = "Profile.html";
+            })
+
+            $('.items-btn').click(function () {
+                window.location.href = "Profile.html";
+            })
+
+            $('.login-btn').click(function () {
+                /*if (localStorage.getItem('isAuthenticated') == 1) {
+                    localStorage.removeItem('isAuthenticated');
+                    localStorage.removeItem('Role');
+                    location.reload();                                    
+                }*/
+                if (getCookie('isAuthenticated') == 1) {
+                    deleteCookie('isAuthenticated')
+                    deleteCookie('Role');
+                    deleteCookie('username')
+                }
+                else {
+                    window.location.href = "Login.html";
+                }
+            })
+
+            /*if(localStorage.getItem('isAuthenticated') == 1){
+                $('.login-btn').html("👤 Logout");
+                $('.profile-btn').show();
+                
+            }*/
+            if (getCookie('isAuthenticated') == 1) {
+                $('.login-btn').html("👤 Logout");
+                $('.profile-btn').show();
+            }
+            else {
+                $('.login-btn').html("👤 Login");
+                $('.profile-btn').hide();
+            }
+
+            $('#back-btn').click(function () {
+                window.location.href = "Index.html";
+            })
+
+            $("#buy-form").submit(function (event) {
+                event.preventDefault();
+
+                // ProductId, BuyerId, Amount
+                // Get form data
+                var formData = {
+                    Amount: $("#buy-amount").val(),
+                    Buyer: getCookie('username'),
+                    ProductId: $("#id").val()
+                    //productImage: document.getElementById('image-input').files[0]
+                    //imagePath: $("#image-input").val()
+                };
+
+                // Send POST request to register endpoint
+                $.ajax({
+                    type: "POST",
+                    url: "api/orders",
+                    data: JSON.stringify(formData),
+                    contentType: "application/json",
+                    success: function (response) {
+                        alert("Ordering successful!");
+                        window.location.href = "Index.html";
+                    },
+                    error: function (error) {
+                        alert("Ordering failed: " + error.responseJSON.message);
+                    }
+                });
+
+            });
+        });
+    </script>
+
+</head>
+
+<body>
+    <div class="menu-container">
+        <div></div>
+        <p class="title menu-item">Title</p>
+        <button class="items-btn menu-item">☰ Items</button>
+        <button class="profile-btn menu-item">👤 Profile</button>
+        <!--<button class="cart-btn menu-item">🛒 Shopping cart</button>-->
+        <button name="loginOut" class="login-btn menu-item">👤 Login/out</button>
+    </div>
+
+    <div class="container">
+        <p id="title">Buy product</p>
+        <form id="buy-form">
+            <div class="flex">
+                <label id="id" hidden></label>
+                <label id="name">Name:</label><label id="name-label"></label><br />
+
+                <label id="price">Price:</label><label id="price-label"></label><br />
+
+                <label id="amount">Amount:</label><label id="amount-label"></label><br />
+
+                <label id="city">City:</label><label id="city-label"></label><br />
+
+                <label id="description">Description:</label><br />
+                <textarea id="description-input" rows="5" cols="40" readonly></textarea><br /><br />
+
+                <label>Amount:</label>
+                <input type="number" required id="buy-amount" />
+
+                <hr />
+
+                <!--<input type="text" id="description-input" required /><br />-->
+                <!--<label id="image">Image:</label>
+                <input id="image-input" type="file" accept="image/jpeg, image/png, image/jpg" required /><br />
+                -->
+
+                <button id="back-btn" class="button" type="button">Back</button> <input type="submit"
+                    value="Buy product" id="buy-btn" /><br />
+            </div>
+
+        </form>
+
+    </div>
+</body>
+
+</html>

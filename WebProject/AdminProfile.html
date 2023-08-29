@@ -1,0 +1,339 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+    <link rel="stylesheet" href="./adminstyle.css" />
+    <script src="Scripts/jquery-3.4.1.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            loadProfileData();
+
+            loadProducts();
+            //loadUsers();
+            loadOrders();
+
+            function loadProfileData() {
+            var username = getCookie('username');
+            $.get("api/user/" + username, function (data) {
+                console.log(data);
+                $('#username-label').text(data.Username);
+                $('#firstname-label').val(data.FirstName);
+                $('#lastname-label').val(data.LastName);
+                $('#mail').attr('value', data.Email);                
+                $('#date').attr('value', data.Birthdate);
+                $('#gender').val(data.Gender);       
+            })
+        }
+
+            $("#updateUser").submit(function (event) {
+                event.preventDefault();            
+
+                // Get form data
+                var formData = {
+                    username: $("#username-label").text(),
+                    password: $("#temp").val(),
+                    firstname: $("#firstname-label").val(),
+                    lastname: $("#lastname-label").val(),
+                    gender: $("#gender").val(),
+                    email: $("#mail").val(),
+                    birthdate: $("#date").val()
+                };
+
+                // Send PUT request to register endpoint
+                $.ajax({
+                    type: "PUT",
+                    url: "api/user/" + $("#username-label").text(),
+                    data: JSON.stringify(formData),
+                    contentType: "application/json",
+                    success: function (response) {
+                        console.log(formData);
+                        alert("Registration successful!");
+                    },
+                    error: function (error) {
+                        console.log(formData);
+                        alert("Registration failed: " + error.responseJSON);
+                    }
+                });
+            });
+
+            function getCookie(cName) {
+                const name = cName + "=";
+                const cDecoded = decodeURIComponent(document.cookie); //to be careful
+                const cArr = cDecoded.split('; ');
+                let res;
+                cArr.forEach(val => {
+                    if (val.indexOf(name) === 0) res = val.substring(name.length);
+                })
+                return res;
+            }  
+
+            function loadProducts() {
+                $.get("api/products", function (data, status) {   
+                    
+                    let tableOfProducts = '<table border="1">';
+                    tableOfProducts += '<tr><th>Id</th><th>Name</th><th>Price</th><th>Amount</th><th>Seller</th><th>Desc</th><th>Date</th><th>City</th><th>Available</th><th colspan="2">Action</th></tr>';            
+                    for (element in data) {
+                        let product = '<td>' + data[element].Id + '</td>';
+                        product += '<td>' + data[element].Name + '</td>';
+                        product += '<td>' + data[element].Price + '</td>';
+                        product += '<td>' + data[element].Amount + '</td>';
+                        product += '<td>' + data[element].SellerUsername + '</td>';
+                        product += '<td>' + data[element].Description + '</td>';
+                        product += '<td>' + data[element].PublishingDate + '</td>';
+                        product += '<td>' + data[element].City + '</td>';
+                        product += '<td>' + data[element].Available + '</td>';
+
+                        product += '<td class="delBtnClass"></td>';
+                        product += '<td class="ModBtnClass"></td>';
+
+                        tableOfProducts += '<tr>' + product + '</tr>';
+                    }
+
+                    tableOfProducts += '</table>';
+                    $('#products-content-container').html(tableOfProducts);
+
+                    let elements = document.getElementsByClassName('delBtnClass');
+                    //let elements = $('delBtnClass');
+                    for (var i = 0; i < elements.length; i++ ) {
+                        let newBtn = document.createElement('button');
+                        newBtn.innerText = 'Delete';
+                        elements[i].appendChild(newBtn);
+                    }
+
+                    elements = document.getElementsByClassName('ModBtnClass');
+                    //let elements = $('delBtnClass');
+                    for (var i = 0; i < elements.length; i++ ) {
+                        let newBtn = document.createElement('button');
+                        newBtn.innerText = 'Modify';
+                        elements[i].appendChild(newBtn);
+                    }
+                });
+            }
+
+            function loadOrders() {
+                $.get("api/orders", function (data, status) {   
+                    for(element in data){
+                        console.log("TITLE: " + data[element].Title);
+                    }
+                    let tableOfOrders = '<table border="1">';
+                        tableOfOrders += '<tr><th>Product</th><th>Amount</th><th>Buyer</th><th>Order Date</th><th>Status</th><th colspan="2">Action</th></tr>';            
+                    for (element in data) {
+                        let order = '<td>' + data[element].Product.Name + '</td>';
+                        order += '<td>' + data[element].Amount + '</td>';
+                        order += '<td>' + data[element].Buyer + '</td>';
+                        order += '<td>' + data[element].OrderingDate + '</td>';
+                        order += '<td>' + data[element].Status + '</td>';
+                        
+                        order += '<td class="delBtnClass"></td>';
+                        order += '<td class="ModBtnClass"></td>';
+
+                        tableOfOrders += '<tr>' + order + '</tr>';
+                    }
+
+                    tableOfOrders += '</table>';
+                    $('#orders-content-container').html(tableOfOrders);
+
+                    let elements = document.getElementsByClassName('delBtnClass');
+                    //let elements = $('delBtnClass');
+                    for (var i = 0; i < elements.length; i++ ) {
+                        let newBtn = document.createElement('button');
+                        newBtn.innerText = 'Delete';
+                        elements[i].appendChild(newBtn);
+                    }
+
+                    elements = document.getElementsByClassName('ModBtnClass');
+                    //let elements = $('delBtnClass');
+                    for (var i = 0; i < elements.length; i++ ) {
+                        let newBtn = document.createElement('button');
+                        newBtn.innerText = 'Modify';
+                        elements[i].appendChild(newBtn);
+                    }
+                });
+            }
+
+            function loadUsers() {
+                $.get("api/user/" + username, function (data) { 
+                    
+                    let tableOfUsers = '<table border="1">';
+                        tableOfUsers += '<tr><th>Id</th><th>Username</th><th>Password</th><th>First Name</th><th>Last Name</th><th>Gender</th><th>Email</th><th>Birthdate</th><th>Role<th><th colspan="2">Action</th></tr>';            
+                    for (element in data) {
+                        let user = '<td>' + data[element].Id + '</td>';
+                        user += '<td>' + data[element].Username + '</td>';
+                        user += '<td>' + data[element].Password + '</td>';
+                        user += '<td>' + data[element].FirstName + '</td>';
+                        user += '<td>' + data[element].LastName + '</td>';
+                        user += '<td>' + data[element].Gender + '</td>';
+                        user += '<td>' + data[element].Email + '</td>';
+                        user += '<td>' + data[element].Birthdate + '</td>';
+                        user += '<td>' + data[element].Role + '</td>';
+
+                        user += '<td class="delBtnClass"></td>';
+                        user += '<td class="ModBtnClass"></td>';
+
+                        tableOfUsers += '<tr>' + product + '</tr>';
+                    }
+
+                    tableOfUsers += '</table>';
+                    $('#users-content-container').html(tableOfUsers);
+
+                    let elements = document.getElementsByClassName('delBtnClass');
+                    //let elements = $('delBtnClass');
+                    for (var i = 0; i < elements.length; i++ ) {
+                        let newBtn = document.createElement('button');
+                        newBtn.innerText = 'Delete';
+                        elements[i].appendChild(newBtn);
+                    }
+
+                    elements = document.getElementsByClassName('ModBtnClass');
+                    //let elements = $('delBtnClass');
+                    for (var i = 0; i < elements.length; i++ ) {
+                        let newBtn = document.createElement('button');
+                        newBtn.innerText = 'Modify';
+                        elements[i].appendChild(newBtn);
+                    }
+                });
+            }
+
+            $('select').change(function(e){
+                var valueSelected = this.value;               
+                var arr = valueSelected.split(",");
+                var criteria = arr[0];
+                var direction = arr[1];
+                sort(".content-container", criteria, direction);
+            }); 
+
+        });
+    </script>
+</head>
+<body>
+    <div class="menu-container">
+        <div></div>
+        <p class="title menu-item">Title</p>   
+        <button class="items-btn menu-item">☰ Items</button>
+        <button class="profile-btn menu-item">👤 Profile</button>       
+        <!--<button class="cart-btn menu-item">🛒 Shopping cart</button>-->
+        <button class="login-btn menu-item">👤 Log In</button>
+    </div>
+    
+    <div class="left side">
+        <form id="updateUser" style="margin-left:10px">
+            <table>
+                <tr>
+                    <td><label>Username:</label></td>
+                    <td><label id="username-label"></label></td>
+                </tr>
+                <tr>
+                    <td colspan="2"><input type="button" id="changePassword-btn" class="button" value="Change password"/></td>
+                </tr>
+                <tr>
+                    <td><label>First Name:</label></td>
+                    <td><input type="text" id="firstname-label" /></td>
+                </tr>
+                <tr>
+                    <td><label>Last Name:</label></td>
+                    <td><input type ="text" id="lastname-label" /></td>
+                </tr>
+                <tr>
+                    <td><label>Gender:</label></td>
+                    <td><select id="gender">
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                    </select></td>
+                </tr>
+                <tr>
+                    <td><label>E-mail:</label></td>
+                    <td><input type="email" id="mail"/></td>
+                </tr>
+                <tr>
+                    <td><label>Birth date:</label></td>
+                    <td><input type="date" id="#date"/></td>
+                </tr>
+
+                <tr>                        
+                    <td colspan="2"><input id="save-btn" type="submit" class="button" value="Save" /></td>
+                </tr>
+            </table>
+        </form>            
+    </div>
+
+    <div class="grid">
+        <div class="users-container">
+            <table style="white-space:nowrap;" id="user-table">
+                <tr>
+                    <td class="align">First Name:</td>
+                    <td>
+                        <input type="text" />
+                    </td>
+                    <td>Sort by:</td>
+                    <td>
+                        <select class="sort-select">
+                            <option value="name,asc">Name asc</option>
+                            <option value="name,desc">Name desc</option>
+                            <option value="price,asc">Price asc</option>
+                            <option value="price,desc">Price desc</option>
+                            <option value="date,asc">Publishing Date asc</option>
+                            <option value="date,desc">Publishing Date desc</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="align">Last Name:</td>
+                    <td>
+                        <input type="text" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>Birthdate:</td>                    
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <input type="date" /> -                       
+                        <input type="date" />                     
+                    </td>
+                </tr>
+            </table>
+
+            <div class="users-content-container"></div>
+
+        </div>
+
+        <div class="products-container">
+            <table style="white-space:nowrap;">
+                <tr>
+                    <td>Filter by:</td>
+                    <td>
+                        <select class="filter-select">
+                            <option value="available">Available</option>
+                            <option value="unavailable">Unavailable</option>
+                        </select>
+                    </td>
+                    <td>Sort by:</td>
+                    <td>
+                        <select class="sort-select">
+                            <option value="name,asc">Name asc</option>
+                            <option value="name,desc">Name desc</option>
+                            <option value="price,asc">Price asc</option>
+                            <option value="price,desc">Price desc</option>
+                            <option value="date,asc">Publishing Date asc</option>
+                            <option value="date,desc">Publishing Date desc</option>
+                        </select>
+                    </td>
+                </tr>
+            </table>
+            
+            <div id="products-content-container"></div>
+
+        </div>
+        
+        <div class="orders-container">
+            <div class="orders-content-container"></div>
+        </div>
+        
+    </div>
+</body>
+</html>

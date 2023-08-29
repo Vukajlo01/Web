@@ -45,10 +45,16 @@ body {
 
 .grid-container {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-columns: 2fr 2fr 2fr 1fr;
     grid-template-rows: 1fr 1fr;
     background-color:  rgb(160, 187, 238);
     gap: 10px;    
+}
+
+.review-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr;
 }
 
 .side {
@@ -58,15 +64,7 @@ body {
 }
 
 .right {
-    grid-column: span 2;
-}
-
-.image {
-    background-color: white;
-    float: left;
-    height: 300px;
-    width: 300px;
-    margin: 10px;
+    grid-column: span 3;
 }
 
 table {
@@ -80,6 +78,7 @@ td {
 
 input[type=text], input[type=email] {
     height: 28px;
+    width: 170px;
 }
 
 input[type=date] {
@@ -107,7 +106,7 @@ select {
     margin-left: 20px;
 
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: center;
 }
 
@@ -123,8 +122,22 @@ select {
     height: 30px;
 }
 
+#all-btn {
+    margin-left: 0px;
+}
+
+.confirm-btn {
+    height: 45px;
+}
+
+.item-btn {
+    margin: 0px;
+    margin-left: 10px;
+}
+
 #changePassword-btn {
-    width: 150px;    
+    width: 150px; 
+    margin-left: 105px;
 }
 
 .last {
@@ -139,4 +152,11 @@ select {
 
 .product-text {
     font-size: 25px;
+}
+
+.panel {
+    background-color: rgb(132, 169, 238);
+    margin-right: 20px;
+    margin-left: 20px;
+    padding: 1rem;
 }

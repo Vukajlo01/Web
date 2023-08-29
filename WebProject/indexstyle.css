@@ -19,10 +19,6 @@ body {
     font-size: 24px;
 }
 
-.star {
-    
-}
-
 .title {
     font-size: 50px;
     margin-right: auto;
@@ -68,6 +64,17 @@ body {
     justify-content: flex-end;
     align-items: center;
     gap: 5px;
+}
+
+#test {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr;
+    background-color: rgb(160, 187, 238);;
+}
+
+#header {
+    margin-bottom: 10px;
 }
 
 input {
@@ -174,4 +181,11 @@ button {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.panel {
+    background-color: rgb(132, 169, 238);
+    margin-right: 20px;
+    margin-left: 20px;
+    padding: 1rem;
 }

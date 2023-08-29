@@ -29,7 +29,7 @@
                 // Send POST request to login endpoint
                 $.ajax({
                     type: "POST",
-                    url: "api/login",
+                    url: "api/auth/login",
                     data: JSON.stringify(formData),
                     contentType: "application/json",
                     success: function (response) {
@@ -49,7 +49,8 @@
                         window.location.href = "Index.html";
                     },
                     error: function (error) {
-                        alert("Login failed: " + error.responseJSON.message);
+                        alert("Invalid username or password.");
+                        console.log(error.responseJSON.message);
                     }
                 });
             });
@@ -71,5 +72,4 @@
         </form>       
         </div>
 </body>
-    
 </html>
